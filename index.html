@@ -14,19 +14,23 @@
 
         .group-header { background: #343a40; color: white; padding: 8px 15px; border-radius: 6px; margin-top: 20px; margin-bottom: 10px; font-size: 1.1em; display: flex; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-        /* カードの基本形（デフォルトが未着手の色になります） */
+        /* カードの基本形 */
         .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; border-left: 8px solid #adb5bd; }
         .card:active { transform: scale(0.98); }
 
-        /* ★変更：ステータスごとの色分け */
-        .status-planned { border-left: 10px solid #ffd43b !important; background-color: #fff9db; } /* 完了予定：明るい黄色 */
-        .status-gray { border-left: 10px solid #868e96 !important; background-color: #f1f3f5; color: #868e96; } /* 完了・繰越：グレーで少し文字も薄く */
+        /* ステータスごとの色分け */
+        .status-planned { border-left: 10px solid #ffd43b !important; background-color: #fff9db; } 
+        .status-gray { border-left: 10px solid #868e96 !important; background-color: #f1f3f5; color: #868e96; } 
 
         .card-header { font-weight: bold; font-size: 1.15em; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         
         .output-tag { background: #e9ecef; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; color: #495057; border: 1px solid #dee2e6; }
 
         .info { font-size: 0.9em; margin-bottom: 4px; color: #495057; line-height: 1.4; }
+        
+        /* ★追加：優先順位用の目立つスタイル */
+        .priority-text { color: #e03131; font-weight: bold; font-size: 1.05em; }
+
         .control-group { display: flex; gap: 10px; margin-top: 12px; }
         
         select { padding: 10px; font-size: 1em; border-radius: 8px; border: 2px solid #ced4da; flex-grow: 1; background: white; color: #333; }
@@ -49,7 +53,7 @@
     <div id="appContainer"></div>
 
 <script>
-    // ★GASのウェブアプリURL★
+    // GASのウェブアプリURL
     const gasUrl = "https://script.google.com/macros/s/AKfycbxj-tIVJTXqGLYtQQoFC_Q-Ru3eys8VRpDpZhSK8OePAfbPq5Ht1ZjAqM3RMe_VX5TV/exec";
 
     let globalData = [];
@@ -97,8 +101,14 @@
             headerObj.innerHTML = `<span>📁 ${groupName}</span> <span>${rows.length}件</span>`;
             container.appendChild(headerObj);
 
+            // ★追加：各グループの中で、優先順位（1, 2, 3...）の順番に並び替える処理
+            rows.sort((a, b) => {
+                const numA = parseInt(a["順"]) || 999; // 空欄は999扱いにして下へ
+                const numB = parseInt(b["順"]) || 999;
+                return numA - numB;
+            });
+
             rows.forEach(row => {
-                // ★変更：新しいステータス判定
                 let statusClass = "";
                 if (row["完了確認"] === "完了予定") statusClass = "status-planned";
                 if (row["完了確認"] === "完了" || row["完了確認"] === "繰越") statusClass = "status-gray";
@@ -108,12 +118,13 @@
                 
                 const outputDisplay = row["出"] ? `<span class="output-tag">出力: ${row["出"]}</span>` : "";
 
-                // ★変更：プルダウンの選択肢を新しいものに更新
+                // ★変更：指定のフォーマット通りに「優先順」の表示を追加
                 div.innerHTML = `
                     <div class="card-header">
                         <span>${row["整理No."]}：${row["顧客名"] || "-"}</span>
                         ${outputDisplay}
                     </div>
+                    <div class="info"><span class="priority-text">優先順：${row["順"] || "-"}</span></div>
                     <div class="info"><strong>作業内容:</strong> ${row["作業内容"] || "-"}</div>
                     <div class="info"><strong>担当:</strong> ${row["担当"] || "未定"} | <strong>備考:</strong> ${row["備考"] || "-"}</div>
                     <div class="control-group">
