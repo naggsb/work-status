@@ -25,7 +25,12 @@
         .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; border-left: 8px solid #adb5bd; }
         .card:active { transform: scale(0.98); }
         .status-planned { border-left: 10px solid #ffd43b !important; background-color: #fff9db; } 
-        .status-gray { border-left: 10px solid #868e96 !important; background-color: #f1f3f5; color: #868e96; } 
+        .status-gray { 
+            border-left: 10px solid #6c757d !important; /* 左の線を少し濃いグレーに */
+            background-color: #dee2e6 !important;       /* 背景を明確に暗いグレーに */
+            color: #495057;                             /* 文字が見やすいように濃いグレーに */
+            opacity: 0.8;                               /* 全体を少し薄くして完了感を強調 */
+            }
         .card-header { font-weight: bold; font-size: 1.15em; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .output-tag { background: #e9ecef; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; color: #495057; border: 1px solid #dee2e6; }
         .priority-text { color: #e03131; font-weight: bold; font-size: 1.05em; }
