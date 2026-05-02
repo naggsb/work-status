@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="今日の作業">
     <title>作業指示書 Web-v3.3</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* v3.3のデザインに合わせ、bodyに Tailwind のクラスと同等のベーススタイルと余白を設定 */
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6; margin: 0; color: #333; padding-bottom: 50px; }
+        /* ★バウンス防止（overscroll-behavior-y: none;）を追加 */
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6; margin: 0; color: #333; padding-bottom: 50px; overscroll-behavior-y: none; }
         
-        /* 統一ヘッダーのスタイル（Tailwindを使用せずに既存のCSSに組み込み） */
         .header-container { background-color: #1d4ed8; color: white; padding: 8px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
         .header-container h1 { text-align: center; font-size: 1.25rem; font-weight: bold; margin: 0 0 4px 0; letter-spacing: 0.05em; text-shadow: none; }
         
-        /* 検索窓とボタンを横並びにするための設定 */
         .search-box { display: flex; gap: 8px; }
         .search-box input { flex: 1; padding: 10px; font-size: 1em; border-radius: 6px; border: none; box-sizing: border-box; box-shadow: 0 1px 3px rgba(0,0,0,0.1); color: black; outline: none; }
         .search-box input:focus { box-shadow: 0 0 0 2px #60a5fa; }
         
-        /* 更新ボタンのスタイル */
         .refresh-btn { 
             padding: 0 15px; background-color: #22c55e; color: white; border: none; border-radius: 6px; 
             font-size: 0.875rem; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1); white-space: nowrap; transition: background-color 0.2s;
@@ -26,8 +26,8 @@
         .refresh-btn:hover { background-color: #16a34a; }
         .refresh-btn:active { transform: scale(0.95); }
 
-        /* コンテンツエリアの余白 */
-        .main-content { padding: 16px; max-w: 28rem; margin: 0 auto; }
+        /* ★max-w: 28rem; を削除し、全幅に対応 */
+        .main-content { padding: 16px; margin: 0 auto; }
 
         .group-header { background: #374151; color: white; padding: 8px 15px; border-radius: 6px; margin-top: 20px; margin-bottom: 10px; font-size: 1.1em; display: flex; justify-content: space-between; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
         .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; border-left: 8px solid #9ca3af; border: 1px solid #e5e7eb; border-left-width: 8px; }
@@ -55,7 +55,7 @@
 </head>
 <body>
 
-<div id="app" class="max-w-md mx-auto bg-gray-100 min-h-screen relative shadow-lg">
+<div id="app" class="w-full mx-auto bg-gray-100 min-h-screen relative shadow-lg">
 
     <header class="header-container">
         <h1>📋 作業指示書 Web-v3.3</h1>
@@ -73,13 +73,10 @@
         <div id="appContainer"></div>
     </main>
 
-<!-- 🌟スリム版ナビ（絵文字なし・文字大・高さ半分） -->
-    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t-2 border-gray-300 flex justify-around z-50">
-      <!-- 現在地：今日の作業（青） -->
+    <nav class="fixed bottom-0 left-0 right-0 w-full mx-auto bg-white border-t-2 border-gray-300 flex justify-around z-50">
       <a href="#" class="flex items-center justify-center w-1/2 py-2 text-blue-700 bg-blue-50 font-bold text-lg border-t-4 border-blue-700">
         今日の作業
       </a>
-      <!-- 過去ログ検索へのリンク（グレー） -->
       <a href="https://sysnaggengvdoo.github.io/work-db/" class="flex items-center justify-center w-1/2 py-2 text-gray-500 border-l border-gray-200 font-bold text-lg hover:bg-gray-50 transition">
         過去ログ検索
       </a>
