@@ -4,198 +4,46 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>作業指示書 Web-v3.2</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #eef2f3; margin: 10px; color: #333; }
-        h2 { text-align: center; color: #0056b3; margin-bottom: 10px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        /* v3.3のデザインに合わせ、bodyに Tailwind のクラスと同等のベーススタイルと余白を設定 */
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6; margin: 0; color: #333; padding-bottom: 80px; }
         
-        .search-container { position: sticky; top: 0; background-color: #eef2f3; padding: 10px 0; z-index: 100; }
+        /* 統一ヘッダーのスタイル（Tailwindを使用せずに既存のCSSに組み込み） */
+        .header-container { background-color: #1d4ed8; color: white; padding: 16px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .header-container h1 { text-align: center; font-size: 1.25rem; font-weight: bold; margin: 0 0 12px 0; letter-spacing: 0.05em; text-shadow: none; }
         
         /* 検索窓とボタンを横並びにするための設定 */
         .search-box { display: flex; gap: 8px; }
-        .search-box input { flex: 1; padding: 12px; font-size: 1em; border-radius: 8px; border: 2px solid #ced4da; box-sizing: border-box; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .search-box input { flex: 1; padding: 10px; font-size: 1em; border-radius: 6px; border: none; box-sizing: border-box; box-shadow: 0 1px 3px rgba(0,0,0,0.1); color: black; outline: none; }
+        .search-box input:focus { box-shadow: 0 0 0 2px #60a5fa; }
         
         /* 更新ボタンのスタイル */
         .refresh-btn { 
-            padding: 0 15px; background-color: #28a745; color: white; border: none; border-radius: 8px; 
-            font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1); white-space: nowrap;
+            padding: 0 15px; background-color: #22c55e; color: white; border: none; border-radius: 6px; 
+            font-size: 0.875rem; font-weight: bold; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.1); white-space: nowrap; transition: background-color 0.2s;
         }
-        .refresh-btn:active { transform: scale(0.95); background-color: #218838; }
+        .refresh-btn:hover { background-color: #16a34a; }
+        .refresh-btn:active { transform: scale(0.95); }
 
-        .group-header { background: #343a40; color: white; padding: 8px 15px; border-radius: 6px; margin-top: 20px; margin-bottom: 10px; font-size: 1.1em; display: flex; justify-content: space-between; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; border-left: 8px solid #adb5bd; }
+        /* コンテンツエリアの余白 */
+        .main-content { padding: 16px; max-w: 28rem; margin: 0 auto; }
+
+        .group-header { background: #374151; color: white; padding: 8px 15px; border-radius: 6px; margin-top: 20px; margin-bottom: 10px; font-size: 1.1em; display: flex; justify-content: space-between; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s, box-shadow 0.2s; border-left: 8px solid #9ca3af; border: 1px solid #e5e7eb; border-left-width: 8px; }
         .card:active { transform: scale(0.98); }
-        .status-planned { border-left: 10px solid #ffd43b !important; background-color: #fff9db; } 
+        .status-planned { border-left-color: #fcd34d !important; background-color: #fefce8; } 
         .status-gray { 
-            border-left: 10px solid #6c757d !important; /* 左の線を少し濃いグレーに */
-            background-color: #dee2e6 !important;       /* 背景を明確に暗いグレーに */
-            color: #495057;                             /* 文字が見やすいように濃いグレーに */
-            opacity: 0.8;                               /* 全体を少し薄くして完了感を強調 */
-            }
+            border-left-color: #6b7280 !important; 
+            background-color: #e5e7eb !important;       
+            color: #4b5563;                             
+            opacity: 0.8;                               
+        }
         .card-header { font-weight: bold; font-size: 1.15em; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .output-tag { background: #e9ecef; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; color: #495057; border: 1px solid #dee2e6; }
-        .priority-text { color: #e03131; font-weight: bold; font-size: 1.05em; }
-        .info { font-size: 0.9em; margin-bottom: 4px; color: #495057; line-height: 1.4; }
+        .output-tag { background: #f3f4f6; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; color: #4b5563; border: 1px solid #d1d5db; }
+        .priority-text { color: #dc2626; font-weight: bold; font-size: 1.05em; }
+        .info { font-size: 0.9em; margin-bottom: 4px; color: #374151; line-height: 1.4; }
         
         .control-group { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; gap: 10px; margin-top: 15px; }
-        .control-group select { grid-column: 1; grid-row: 1; padding: 10px; font-size: 1em; border-radius: 8px; border: 2px solid #ced4da; background: white; color: #333; }
-        .control-group input[type="text"] { grid-column: 1; grid-row: 2; padding: 10px; font-size: 1em; border-radius: 8px; border: 2px solid #ced4da; box-sizing: border-box; background: #fdfdfd; }
-        .control-group button { grid-column: 2; grid-row: 1 / 3; padding: 0 20px; font-size: 1.1em; border: none; border-radius: 8px; background-color: #007bff; color: white; cursor: pointer; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        #loading { text-align: center; padding: 40px; color: #666; font-size: 1.2em; }
-    </style>
-</head>
-<body>
-
-    <h2>作業指示書 Web-v3.2</h2>
-    
-    <div class="search-container">
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="🔍 整理No、顧客名、担当で検索..." oninput="renderData()">
-            <button class="refresh-btn" onclick="refreshData()">最新情報に更新</button>
-        </div>
-    </div>
-
-    <div id="loading">データを読み込み中...</div>
-    <div id="appContainer"></div>
-
-<script>
-    const gasUrl = "https://script.google.com/macros/s/AKfycbxj-tIVJTXqGLYtQQoFC_Q-Ru3eys8VRpDpZhSK8OePAfbPq5Ht1ZjAqM3RMe_VX5TV/exec";
-
-    let globalData = [];
-
-    // ★追加：ボタンから呼び出される更新用関数
-    function refreshData() {
-        document.getElementById('appContainer').innerHTML = ''; // 画面を一旦クリア
-        document.getElementById('loading').style.display = 'block'; // ローディング表示を出す
-        document.getElementById('loading').innerText = "最新情報を取得中...";
-        loadData();
-    }
-
-    async function loadData() {
-        try {
-            // キャッシュ対策（URLにタイムスタンプを付与）
-            const response = await fetch(`${gasUrl}?_=${new Date().getTime()}`);
-            globalData = await response.json();
-            document.getElementById('loading').style.display = 'none';
-            renderData();
-        } catch (error) {
-            document.getElementById('loading').innerText = "データの読み込みに失敗しました。";
-        }
-    }
-
-    function renderData() {
-        const container = document.getElementById('appContainer');
-        container.innerHTML = '';
-        const searchWord = document.getElementById('searchInput').value.toLowerCase();
-
-        const filteredData = globalData.filter(row => {
-            if(!row["ID"]) return false; 
-            const matchId = String(row["整理No."] || "").toLowerCase().includes(searchWord);
-            const matchName = String(row["顧客名"] || "").toLowerCase().includes(searchWord);
-            const matchPerson = String(row["担当"] || "").toLowerCase().includes(searchWord);
-            return matchId || matchName || matchPerson;
-        });
-
-        const groupedData = {};
-        filteredData.forEach(row => {
-            const groupName = row["部署"] || "その他（部署未定）";
-            if (!groupedData[groupName]) { groupedData[groupName] = []; }
-            groupedData[groupName].push(row);
-        });
-
-        for (const [groupName, rows] of Object.entries(groupedData)) {
-            if (rows.length === 0) continue;
-
-            const headerObj = document.createElement('div');
-            headerObj.className = 'group-header';
-            headerObj.innerHTML = `<span>📁 ${groupName}</span> <span>${rows.length}件</span>`;
-            container.appendChild(headerObj);
-
-            rows.sort((a, b) => (parseInt(a["順"]) || 999) - (parseInt(b["順"]) || 999));
-
-            rows.forEach(row => {
-                let statusClass = "";
-                if (row["完了確認"] === "完了予定") statusClass = "status-planned";
-                if (row["完了確認"] === "完了" || row["完了確認"] === "繰越") statusClass = "status-gray";
-
-                const div = document.createElement('div');
-                div.className = `card ${statusClass}`;
-                const outputDisplay = row["出"] ? `<span class="output-tag">出力: ${row["出"]}</span>` : "";
-
-                div.innerHTML = `
-                    <div class="card-header">
-                        <span>${row["整理No."]}：${row["顧客名"] || "-"}</span>
-                        ${outputDisplay}
-                    </div>
-                    <div class="info"><span class="priority-text">優先順：${row["順"] || "-"}</span></div>
-                    <div class="info"><strong>作業内容:</strong> ${row["作業内容"] || "-"}</div>
-                    <div class="info"><strong>担当:</strong> ${row["担当"] || "未定"}</div>
-                    <div class="control-group">
-                        <select id="status-${row["ID"]}">
-                            <option value="未着手" ${!row["完了確認"] || row["完了確認"] === "未着手" ? "selected" : ""}>未着手</option>
-                            <option value="完了予定" ${row["完了確認"] === "完了予定" ? "selected" : ""}>完了予定</option>
-                            <option value="完了" ${row["完了確認"] === "完了" ? "selected" : ""}>完了</option>
-                            <option value="繰越" ${row["完了確認"] === "繰越" ? "selected" : ""}>繰越</option>
-                        </select>
-                        <input type="text" id="note-${row["ID"]}" placeholder="備考を入力..." value="${row["備考"] || ""}">
-                        <button id="btn-${row["ID"]}" onclick="updateStatus('${row["ID"]}')">更新</button>
-                    </div>
-                `;
-                container.appendChild(div);
-            });
-        }
-
-        if (filteredData.length === 0) {
-            container.innerHTML = '<div style="text-align:center; padding:20px; color:#666;">一致する指示書がありません</div>';
-        }
-    }
-
-    async function updateStatus(id) {
-        const newStatus = document.getElementById(`status-${id}`).value;
-        const newNote = document.getElementById(`note-${id}`).value;
-        const btn = document.getElementById(`btn-${id}`);
-        
-        btn.innerText = "更新中...";
-        btn.disabled = true;
-
-       try {
-            const response = await fetch(gasUrl, {
-                method: 'POST',
-                redirect: 'follow', 
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify({ id: id, status: newStatus, note: newNote })
-            });
-
-            const result = await response.json();
-            if(result.success) {
-                // ★改善ポイント：GASから全件読み込まず、手元のデータを直接書き換える
-                const targetRow = globalData.find(row => String(row["ID"]) === String(id));
-                if(targetRow) {
-                    targetRow["完了確認"] = newStatus;
-                    targetRow["備考"] = newNote;
-                }
-                
-                // 画面を再描画（fetchしないので一瞬で終わる）
-                renderData(); 
-                
-                // （任意）ボタンを一瞬「完了！」にして視覚的にわかりやすくする
-                /* renderData()でボタンも再生成されるため記述不要ですが、
-                もしrenderData()を呼ばない設計にするならここでボタンの文字を変えます。
-                */
-
-            } else {
-                alert("更新失敗: " + result.error);
-                btn.innerText = "更新";
-                btn.disabled = false;
-            }
-        } catch (error) {
-            alert("通信エラーが発生しました。");
-            btn.innerText = "更新";
-            btn.disabled = false;
-        }
-    }
-
-    window.onload = loadData;
-</script>
-
-</body>
-</html>
+        .control-group select { grid-column: 1; grid-row: 1; padding: 10px; font-size: 1em; border-radius: 6px; border: 1px solid #d1d5db; background: white; color: #1f2937; outline: none; }
+        .control-group input[type="text"] { grid-column: 1; grid-row: 2; padding: 10px; font-size: 1em; border-radius: 6
