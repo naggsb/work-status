@@ -7,11 +7,11 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* v3.3のデザインに合わせ、bodyに Tailwind のクラスと同等のベーススタイルと余白を設定 */
-        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6; margin: 0; color: #333; padding-bottom: 80px; }
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6; margin: 0; color: #333; padding-bottom: 50px; }
         
         /* 統一ヘッダーのスタイル（Tailwindを使用せずに既存のCSSに組み込み） */
-        .header-container { background-color: #1d4ed8; color: white; padding: 16px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
-        .header-container h1 { text-align: center; font-size: 1.25rem; font-weight: bold; margin: 0 0 12px 0; letter-spacing: 0.05em; text-shadow: none; }
+        .header-container { background-color: #1d4ed8; color: white; padding: 8px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
+        .header-container h1 { text-align: center; font-size: 1.25rem; font-weight: bold; margin: 0 0 4px 0; letter-spacing: 0.05em; text-shadow: none; }
         
         /* 検索窓とボタンを横並びにするための設定 */
         .search-box { display: flex; gap: 8px; }
@@ -73,12 +73,14 @@
         <div id="appContainer"></div>
     </main>
 
-<!-- 今日の作業側：修正版ナビ（絵文字なし・スリム・文字大） -->
+<!-- 🌟スリム版ナビ（絵文字なし・文字大・高さ半分） -->
     <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t-2 border-gray-300 flex justify-around z-50">
-      <a href="#" class="flex items-center justify-center w-1/2 py-4 text-blue-700 bg-blue-50 font-bold text-lg border-t-4 border-blue-700">
+      <!-- 現在地：今日の作業（青） -->
+      <a href="#" class="flex items-center justify-center w-1/2 py-2 text-blue-700 bg-blue-50 font-bold text-lg border-t-4 border-blue-700">
         今日の作業
       </a>
-      <a href="https://sysnaggengvdoo.github.io/work-db/" class="flex items-center justify-center w-1/2 py-4 text-gray-500 border-l border-gray-200 font-bold text-lg">
+      <!-- 過去ログ検索へのリンク（グレー） -->
+      <a href="https://sysnaggengvdoo.github.io/work-db/" class="flex items-center justify-center w-1/2 py-2 text-gray-500 border-l border-gray-200 font-bold text-lg hover:bg-gray-50 transition">
         過去ログ検索
       </a>
     </nav>
