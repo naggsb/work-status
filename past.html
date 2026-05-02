@@ -52,10 +52,13 @@
         
         <div class="space-y-6">
           <div v-for="group in filteredGroupedLogs" :key="group.no" class="bg-white border-2 border-gray-200 rounded-xl shadow-md overflow-hidden">
-            <div class="bg-gray-800 text-white p-3 flex flex-col gap-1">
-              <div class="flex justify-between items-center">
+        <div class="bg-gray-800 text-white p-3 flex flex-col gap-1">
+              <div class="flex justify-between items-start">
                 <span class="font-black text-xl text-blue-300">{{ group.no }}</span>
-                <span class="bg-gray-600 px-2 py-1 rounded text-xs">履歴 {{ group.records.length }}件</span>
+                <div class="flex flex-col items-end gap-1">
+                  <span class="bg-gray-600 px-2 py-1 rounded text-xs">履歴 {{ group.records.length }}件</span>
+                  <span v-if="group.output" class="text-xs font-bold text-white">出力: {{ group.output }}</span>
+                </div>
               </div>
               <div class="text-sm font-bold border-t border-gray-600 pt-1 mt-1">
                 顧客名: {{ group.customer }}
@@ -131,26 +134,33 @@
           }
         };
 
-        const groupedLogs = computed(() => {
+          const groupedLogs = computed(() => {
           const groups = {};
           allLogs.value.forEach(log => {
             const no = String(log['整理№'] || log['整理No'] || log['整理No.'] || 'Noなし');
             if (!groups[no]) {
-              groups[no] = { no: no, customer: String(log['顧客名'] || '未入力'), records: [] };
+              // ★ output: String(...) を追加して「出」または「出力」列のデータを取得
+              groups[no] = { no: no, customer: String(log['顧客名'] || '未入力'), output: String(log['出'] || log['出力'] || ''), records: [] };
+            }
+            // ★ 過去の履歴のどこかに出力情報があれば補完する処理を追加
+            if (!groups[no].output && (log['出'] || log['出力'])) {
+              groups[no].output = String(log['出'] || log['出力']);
             }
             groups[no].records.push(log);
           });
           return Object.values(groups);
         });
 
-        const filteredGroupedLogs = computed(() => {
+       const filteredGroupedLogs = computed(() => {
           if (!searchQuery.value) return groupedLogs.value;
           const query = searchQuery.value.toLowerCase();
           return groupedLogs.value.filter(group => {
-            const matchHeader = group.no.toLowerCase().includes(query) || group.customer.toLowerCase().includes(query);
+            // ★ group.output.toLowerCase().includes(query) を追加
+            const matchHeader = group.no.toLowerCase().includes(query) || group.customer.toLowerCase().includes(query) || group.output.toLowerCase().includes(query);
             if (matchHeader) return true;
             return group.records.some(log => {
-              const targetText = `${log['TS'] || ''}${log['作業内容'] || ''}${log['担当'] || ''}${log['備考（引継ぎ・進捗状況等）'] || ''}`.toLowerCase();
+              // ★ 検索対象テキストに ${log['出'] || log['出力'] || ''} を追加
+              const targetText = `${log['TS'] || ''}${log['作業内容'] || ''}${log['担当'] || ''}${log['備考（引継ぎ・進捗状況等）'] || ''}${log['出'] || log['出力'] || ''}`.toLowerCase();
               return targetText.includes(query);
             });
           });
