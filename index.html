@@ -47,8 +47,25 @@
         
         .control-group { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; gap: 10px; margin-top: 15px; }
         .control-group select { grid-column: 1; grid-row: 1; padding: 10px; font-size: 1em; border-radius: 6px; border: 1px solid #d1d5db; background: white; color: #1f2937; outline: none; }
-        .control-group input[type="text"] { grid-column: 1; grid-row: 2; padding: 10px; font-size: 1em; border-radius: 6px; border: 1px solid #d1d5db; box-sizing: border-box; background: #f9fafb; outline: none; }
-        .control-group input[type="text"]:focus, .control-group select:focus { border-color: #60a5fa; box-shadow: 0 0 0 1px #60a5fa; }
+        .control-group textarea { 
+        grid-column: 1; 
+        grid-row: 2; 
+        padding: 10px; 
+        font-size: 1em; 
+        border-radius: 6px; 
+        border: 1px solid #d1d5db; 
+        box-sizing: border-box; 
+        background: #f9fafb; 
+        outline: none; 
+        min-height: 60px; /* ★最初の高さを確保 */
+        resize: vertical; /* ★ユーザーが縦にドラッグして広げられるようにする */
+        font-family: inherit; /* フォントを周囲と合わせる */
+        line-height: 1.4;
+        }
+        .control-group textarea:focus, .control-group select:focus { 
+        border-color: #60a5fa; 
+        box-shadow: 0 0 0 1px #60a5fa; 
+        }
         .control-group button { grid-column: 2; grid-row: 1 / 3; padding: 0 20px; font-size: 1.1em; border: none; border-radius: 6px; background-color: #3b82f6; color: white; cursor: pointer; font-weight: bold; box-shadow: 0 1px 2px rgba(0,0,0,0.1); transition: background-color 0.2s; }
         .control-group button:hover { background-color: #2563eb; }
         #loading { text-align: center; padding: 40px; color: #4b5563; font-size: 1.1em; font-weight: bold; }
@@ -164,7 +181,7 @@
                             <option value="完了" ${row["完了確認"] === "完了" ? "selected" : ""}>完了</option>
                             <option value="繰越" ${row["完了確認"] === "繰越" ? "selected" : ""}>繰越</option>
                         </select>
-                        <input type="text" id="note-${row["ID"]}" placeholder="備考を入力..." value="${row["備考"] || ""}">
+                        <textarea id="note-${row["ID"]}" placeholder="備考を入力..." rows="2">${row["備考"] || ""}</textarea>
                         <button id="btn-${row["ID"]}" onclick="updateStatus('${row["ID"]}')">更新</button>
                     </div>
                 `;
