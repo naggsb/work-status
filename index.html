@@ -7,10 +7,9 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="作業指示書">
     <link rel="manifest" href="manifest.json">
-    <title>作業指示書 Web-v3.4</title>
+    <title>作業指示書 Web-v3.5</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* ★バウンス防止（overscroll-behavior-y: none;）を追加 */
         body { font-family: 'Helvetica Neue', Arial, sans-serif; background-color: #f3f4f6; margin: 0; color: #333; padding-bottom: 50px; overscroll-behavior-y: none; }
         
         .header-container { background-color: #1d4ed8; color: white; padding: 8px; position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); }
@@ -27,7 +26,6 @@
         .refresh-btn:hover { background-color: #16a34a; }
         .refresh-btn:active { transform: scale(0.95); }
 
-        /* ★max-w: 28rem; を削除し、全幅に対応 */
         .main-content { padding: 16px; margin: 0 auto; }
 
         .group-header { background: #374151; color: white; padding: 8px 15px; border-radius: 6px; margin-top: 20px; margin-bottom: 10px; font-size: 1.1em; display: flex; justify-content: space-between; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
@@ -37,8 +35,8 @@
         .status-gray { 
             border-left-color: #6b7280 !important; 
             background-color: #e5e7eb !important;        
-            color: #4b5563;                             
-            opacity: 0.8;                               
+            color: #4b5563;                               
+            opacity: 0.8;                                
         }
         .card-header { font-weight: bold; font-size: 1.15em; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .output-tag { background: #f3f4f6; padding: 2px 8px; border-radius: 4px; font-size: 0.85em; color: #4b5563; border: 1px solid #d1d5db; }
@@ -48,45 +46,49 @@
         .control-group { display: grid; grid-template-columns: 1fr auto; grid-template-rows: auto auto; gap: 10px; margin-top: 15px; }
         .control-group select { grid-column: 1; grid-row: 1; padding: 10px; font-size: 1em; border-radius: 6px; border: 1px solid #d1d5db; background: white; color: #1f2937; outline: none; }
         .control-group textarea { 
-        grid-column: 1; 
-        grid-row: 2; 
-        padding: 10px; 
-        font-size: 1em; 
-        border-radius: 6px; 
-        border: 1px solid #d1d5db; 
-        box-sizing: border-box; 
-        background: #f9fafb; 
-        outline: none; 
-        min-height: 60px; /* ★最初の高さを確保 */
-        resize: vertical; /* ★ユーザーが縦にドラッグして広げられるようにする */
-        font-family: inherit; /* フォントを周囲と合わせる */
-        line-height: 1.4;
+            grid-column: 1; 
+            grid-row: 2; 
+            padding: 10px; 
+            font-size: 1em; 
+            border-radius: 6px; 
+            border: 1px solid #d1d5db; 
+            box-sizing: border-box; 
+            background: #f9fafb; 
+            outline: none; 
+            min-height: 60px;
+            resize: vertical; 
+            font-family: inherit; 
+            line-height: 1.4;
         }
         .control-group textarea:focus, .control-group select:focus { 
-        border-color: #60a5fa; 
-        box-shadow: 0 0 0 1px #60a5fa; 
+            border-color: #60a5fa; 
+            box-shadow: 0 0 0 1px #60a5fa; 
         }
         .control-group button { grid-column: 2; grid-row: 1 / 3; padding: 0 20px; font-size: 1.1em; border: none; border-radius: 6px; background-color: #3b82f6; color: white; cursor: pointer; font-weight: bold; box-shadow: 0 1px 2px rgba(0,0,0,0.1); transition: background-color 0.2s; }
         .control-group button:hover { background-color: #2563eb; }
         #loading { text-align: center; padding: 40px; color: #4b5563; font-size: 1.1em; font-weight: bold; }
+        
+        #calc-iframe {
+            display: none;
+            width: 100%;
+            height: calc(100vh - 110px);
+            border: none;
+        }
     </style>
 </head>
 <body>
 
 <div id="app" class="w-full mx-auto bg-gray-100 min-h-screen relative shadow-lg">
 
-    <header class="header-container">
-        <h1>📋 作業指示書 Web-v3.4</h1>
-        <a href="https://forms.gle/CiMCvXzuz7To624P6" target="_blank" class="block bg-yellow-400 hover:bg-yellow-300 text-blue-900 text-center py-2 px-4 mb-3 rounded-lg font-bold text-sm shadow-inner transition-colors duration-200">
-        📢皆さんの声が改善に繋がります。自ら変える行動を。【評価・要望】の送信はコチラ
-        </a>
-        <div class="search-box">
+    <header class="header-container" id="main-header">
+        <h1>📋 作業指示書 Web-v3.5</h1>
+        <div class="search-box" id="search-box">
             <input type="text" id="searchInput" placeholder="🔍 整理No、顧客名、担当で検索..." oninput="renderData()">
             <button class="refresh-btn" onclick="refreshData()">🔄 最新に更新</button>
         </div>
     </header>
 
-    <main class="main-content">
+    <main class="main-content" id="work-order-main">
         <div id="loading">
             <div class="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-3"></div>
             データを読み込み中...
@@ -94,14 +96,17 @@
         <div id="appContainer"></div>
     </main>
 
-<!-- 🌟 今日の作業 (index.html) の究極ナビ -->
+    <iframe id="calc-iframe" src="https://sysnaggengvdoo.github.io/balanceapp/"></iframe>
+
     <nav class="fixed bottom-0 left-0 right-0 w-full mx-auto bg-white border-t-2 border-gray-300 flex justify-around z-50">
-      <div class="flex items-center justify-center w-1/2 py-2 text-blue-700 bg-blue-50 font-bold text-lg border-t-4 border-blue-700">
+      <div id="nav-today" onclick="switchMainTab('today')" class="cursor-pointer flex items-center justify-center w-1/3 py-2 text-blue-700 bg-blue-50 font-bold text-lg border-t-4 border-blue-700 transition">
         今日の作業
       </div>
-      <!-- ★ ココです！ href を完全に消し去り、replace に変更しました！ -->
-      <div onclick="window.location.replace('past.html');" class="cursor-pointer flex items-center justify-center w-1/2 py-2 text-gray-500 border-l border-gray-200 font-bold text-lg hover:bg-gray-50 transition">
-        過去ログ検索
+      <div id="nav-past" onclick="window.location.replace('past.html');" class="cursor-pointer flex items-center justify-center w-1/3 py-2 text-gray-500 border-l border-gray-200 font-bold text-lg hover:bg-gray-50 transition">
+        過去検索
+      </div>
+      <div id="nav-calc" onclick="switchMainTab('calc')" class="cursor-pointer flex items-center justify-center w-1/3 py-2 text-gray-500 border-l border-gray-200 font-bold text-lg hover:bg-gray-50 transition">
+        計算
       </div>
     </nav>
 
@@ -111,6 +116,33 @@
     const gasUrl = "https://script.google.com/macros/s/AKfycbxj-tIVJTXqGLYtQQoFC_Q-Ru3eys8VRpDpZhSK8OePAfbPq5Ht1ZjAqM3RMe_VX5TV/exec";
 
     let globalData = [];
+
+    function switchMainTab(tabName) {
+        const workMain = document.getElementById('work-order-main');
+        const calcFrame = document.getElementById('calc-iframe');
+        const searchBox = document.getElementById('search-box');
+        
+        const navToday = document.getElementById('nav-today');
+        const navCalc = document.getElementById('nav-calc');
+
+        if (tabName === 'calc') {
+            workMain.style.display = 'none';
+            calcFrame.style.display = 'block';
+            
+            searchBox.style.display = 'none';
+
+            navToday.className = "cursor-pointer flex items-center justify-center w-1/3 py-2 text-gray-500 border-gray-200 font-bold text-lg hover:bg-gray-50 transition";
+            navCalc.className = "cursor-pointer flex items-center justify-center w-1/3 py-2 text-blue-700 bg-blue-50 font-bold text-lg border-l border-t-4 border-blue-700 transition";
+        } else {
+            workMain.style.display = 'block';
+            calcFrame.style.display = 'none';
+            
+            searchBox.style.display = 'flex';
+
+            navToday.className = "cursor-pointer flex items-center justify-center w-1/3 py-2 text-blue-700 bg-blue-50 font-bold text-lg border-t-4 border-blue-700 transition";
+            navCalc.className = "cursor-pointer flex items-center justify-center w-1/3 py-2 text-gray-500 border-l border-gray-200 font-bold text-lg hover:bg-gray-50 transition";
+        }
+    }
 
     function refreshData() {
         document.getElementById('appContainer').innerHTML = '';
